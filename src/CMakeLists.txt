@@ -121,3 +121,11 @@ add_executable(Cathedral_Assets_Optimizer WIN32
 )
 
 target_link_libraries(Cathedral_Assets_Optimizer PUBLIC CAO_LIB)
+
+# Headless exe: console subsystem, so shells wait for it, see its output and get its exit code
+add_executable(Cathedral_Assets_Optimizer_CLI
+        ${SOURCE_DIR}/main.cpp
+        ${DATA_DIR}/styles/Cathedral_Assets_Optimizer.rc
+)
+target_compile_definitions(Cathedral_Assets_Optimizer_CLI PRIVATE CAO_CLI_ONLY)
+target_link_libraries(Cathedral_Assets_Optimizer_CLI PUBLIC CAO_LIB)

@@ -12,4 +12,7 @@ namespace cao {
 constexpr auto k_log_file_name = "cao.log";
 
 [[nodiscard]] auto init_logging(const std::filesystem::path &log_directory) noexcept -> bool;
+
+/// Number of error and fatal messages logged since startup
+[[nodiscard]] auto logged_error_count() noexcept -> size_t;
 } // namespace cao

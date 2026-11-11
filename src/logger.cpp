@@ -12,6 +12,7 @@
 #include <plog/Init.h>
 #include <plog/Log.h>
 
+#include <atomic>
 #include <filesystem>
 #include <fstream>
 
@@ -23,6 +24,29 @@ public:
     [[maybe_unused]] [[nodiscard]] static auto header() -> plog::util::nstring;
     [[maybe_unused]] [[nodiscard]] static auto format(const plog::Record &record) -> plog::util::nstring;
 };
+
+// Counts error and fatal records, so headless runs can report per-file failures through the exit code
+class ErrorCountingAppender final : public plog::IAppender
+{
+public:
+    void write(const plog::Record &record) override
+    {
+        if (record.getSeverity() <= plog::Severity::error) // plog::none is never logged
+            count_.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    [[nodiscard]] auto count() const noexcept -> size_t { return count_.load(std::memory_order_relaxed); }
+
+private:
+    std::atomic_size_t count_{0};
+};
+
+ErrorCountingAppender g_error_counter;
+
+auto logged_error_count() noexcept -> size_t
+{
+    return g_error_counter.count();
+}
 
 [[nodiscard]] auto get_appender(const std::filesystem::path &log_file_path) noexcept -> plog::IAppender *
 {
@@ -59,7 +83,7 @@ public:
 
     static plog::ColorConsoleAppender<CustomFormatter> console_appender;
 
-    plog::init(plog::Severity::verbose, get_appender(log_file_path)).addAppender(&console_appender);
+    plog::init(plog::Severity::verbose, get_appender(log_file_path)).addAppender(&console_appender).addAppender(&g_error_counter);
 
     PLOGV << fmt::format("Logging initialized at time: {}", std::chrono::system_clock::now());
     return true;

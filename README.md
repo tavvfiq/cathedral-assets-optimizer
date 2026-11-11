@@ -8,6 +8,22 @@ Cathedral Assets Optimizer is a tool aiming to automate asset conversion and opt
 
 See [the wiki](https://gitlab.com/G_ka/sse-assets-optimiser/wikis/Build-instructions).
 
+# Headless mode
+
+`Cathedral_Assets_Optimizer_CLI` is a console build that never opens a window. It uses the profiles from
+`settings.json` (or the built-in `FNV`, `SSE`, `SLE`, `FO4NG`, `Starfield` profiles if none exist).
+
+```
+Cathedral_Assets_Optimizer_CLI <profile> [--input <path>] [--mode single|several] [--dry-run]
+```
+
+- `--input`, `--mode` and `--dry-run` override the profile for this run only; nothing is saved.
+- Ctrl+C stops after the files in progress; a second Ctrl+C kills the process.
+- Exit codes: `0` success, `1` fatal error, `2` finished with errors, `130` interrupted.
+- The log directory is printed at startup; the log file is `cao.log`.
+
+The GUI exe also accepts `--cli`, but as a Windows GUI-subsystem program it shows no console output.
+
 # Features and use instructions
 
 See [the NexusMods page](https://www.nexusmods.com/skyrimspecialedition/mods/23316).

@@ -9,7 +9,10 @@ vcpkg_from_github(
   SHA512
   a1ff4c8e0c641e50e8492225f114302d68b093a55592376da2d0cefc6d400db95ea8e9b8836545277ee0f5e6cf6598883247c7921e7859bf80bb55a35a391b1a
   HEAD_REF
-  master)
+  master
+  PATCHES
+  fix-msvc-narrowing.patch # MSVC 14.4x rejects int->size_t narrowing in TexMetadata init (C2397)
+)
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS FEATURES xmem
                      BSA_SUPPORT_XMEM)
